@@ -1,26 +1,15 @@
-// Add stars
-        const starGeometry = new THREE.BufferGeometry();
-        const starMaterial = new THREE.PointsMaterial({
-            color: 0xFFFFFF,
-            size: 0.05,
-        });
+## To run the project follow the below guidelines:
 
-        const starVertices = [];
-        for (let i = 0; i < 10000; i++) {
-            const x = (Math.random() - 0.5) * 2000;
-            const y = (Math.random() - 0.5) * 2000;
-            const z = (Math.random() - 0.5) * 2000;
-            starVertices.push(x, y, z);
-        }
+# open the folder in VSC
 
-        starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
-        const stars = new THREE.Points(starGeometry, starMaterial);
-        scene.add(stars);
+# open terminal in the root folder
 
-        // Lighting
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
-        scene.add(ambientLight);
+# npm init -y
 
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 1.7);
-        directionalLight.position.set(10, 10, 10);
-        scene.add(directionalLight);
+# npm install three
+
+# npm install d3-geo
+
+# npm run dev
+
+## READY!!!
