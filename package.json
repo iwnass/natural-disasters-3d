@@ -1,0 +1,20 @@
+{
+  "name": "earth-3d",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "d3-geo": "^3.1.1",
+    "three": "^0.172.0"
+  },
+  "devDependencies": {
+    "vite": "^6.0.11"
+  }
+}
