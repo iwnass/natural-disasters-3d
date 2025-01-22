@@ -1,6 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Earth Natural Disasters</title>
     <link rel="shortcut icon" href="./disaster.png" type="image/x-icon">
     <style>
@@ -89,9 +91,6 @@
     <script type="module">
         import * as THREE from './node_modules/three/build/three.module.js';
         import { OrbitControls } from './node_modules/three/examples/jsm/controls/OrbitControls.js';
-        // import * as THREE from './node_modules/three/build/three.module.js';
-        // import { OrbitControls } from './node_modules/three/examples/jsm/controls/OrbitControls.js';
-        // import { geoGraticule10, geoJson } from './node_modules/d3-geo/dist/d3-geo.min.js';
 
         const disasters = [
             {
@@ -157,9 +156,10 @@
         const earthMap = textureLoader.load('./textures/planets/earth_atmos_2048.jpg');
         const earthBump = textureLoader.load('./textures/planets/earth_normal_2048.jpg');
         const earthSpec = textureLoader.load('./textures/planets/earth_specular_2048.jpg');
+        const moonTexture = textureLoader.load('textures/planets/moon_1024.jpg');
 
-         // Add stars
-         const starGeometry = new THREE.BufferGeometry();
+        // Add stars
+        const starGeometry = new THREE.BufferGeometry();
         const starMaterial = new THREE.PointsMaterial({
             color: 0xFFFFFF,
             size: 0.05,
@@ -177,8 +177,6 @@
         const stars = new THREE.Points(starGeometry, starMaterial);
         scene.add(stars);
 
-
-
         // Earth setup
         const earthGeometry = new THREE.SphereGeometry(5, 64, 64);
         const earthMaterial = new THREE.MeshPhongMaterial({
@@ -192,13 +190,25 @@
         const earth = new THREE.Mesh(earthGeometry, earthMaterial);
         scene.add(earth);
 
-        // // Lighting
-        // const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
-        // scene.add(ambientLight);
+        // Moon setup
+        const moonGeometry = new THREE.SphereGeometry(1.5, 32, 32);
+        const moonMaterial = new THREE.MeshPhongMaterial({
+            map: moonTexture,
+            bumpScale: 0.02,
+        });
+        const moon = new THREE.Mesh(moonGeometry, moonMaterial);
+        moon.position.set(25, 0, 10);
+        scene.add(moon);
 
-        // const pointLight = new THREE.PointLight(0xffffff, 2);
-        // pointLight.position.set(15, 15, 15);
-        // scene.add(pointLight);
+        // Animate Moon orbit and rotation
+        let moonAngle = 0;
+        function animateMoon() {
+            moonAngle += 0.002;
+            const radius = 8;
+            moon.position.x = Math.cos(moonAngle) * radius;
+            moon.position.z = Math.sin(moonAngle) * radius;
+            moon.rotation.y += 0.01; // Make the moon rotate on its axis
+        }
 
         // Lighting
         const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
@@ -218,7 +228,7 @@
             const marker = new THREE.Mesh(markerGeometry, markerMaterial);
             marker.position.copy(disaster.position);
             marker.userData = disaster;
-            
+
             // Add glow effect
             const glowGeometry = new THREE.SphereGeometry(0.3, 16, 16);
             const glowMaterial = new THREE.MeshBasicMaterial({
@@ -228,7 +238,7 @@
             });
             const glow = new THREE.Mesh(glowGeometry, glowMaterial);
             marker.add(glow);
-            
+
             markers.add(marker);
         });
         earth.add(markers);
@@ -260,19 +270,19 @@
                 const disaster = marker.userData;
                 const popup = document.getElementById('popup');
                 popup.style.display = 'block';
-                
+
                 const padding = 20;
                 let left = event.clientX + padding;
                 let top = event.clientY;
-                
+
                 if (left + popup.offsetWidth > window.innerWidth) {
                     left = event.clientX - popup.offsetWidth - padding;
                 }
-                
+
                 if (top + popup.offsetHeight > window.innerHeight) {
                     top = window.innerHeight - popup.offsetHeight - padding;
                 }
-                
+
                 popup.style.left = left + 'px';
                 popup.style.top = top + 'px';
                 popup.querySelector('h3').textContent = disaster.title;
@@ -284,10 +294,11 @@
 
         window.addEventListener('click', onClick);
 
-        // Animation
+        // Animation loop
         function animate() {
             requestAnimationFrame(animate);
             earth.rotation.y += 0.002;
+            animateMoon(); // Animate the moon's orbit and rotation
             controls.update();
             renderer.render(scene, camera);
         }
@@ -303,5 +314,3 @@
     </script>
 </body>
 </html>
-
-
