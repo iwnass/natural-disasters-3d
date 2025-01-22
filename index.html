@@ -17,64 +17,182 @@
             z-index: 100;
             font-size: 24px;
             text-shadow: 0 0 10px rgba(0,150,255,0.8);
+            animation: glow 2s ease-in-out infinite alternate;
         }
+
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 10px rgba(0,150,255,0.8);
+            }
+            to {
+                text-shadow: 0 0 20px rgba(0,150,255,1), 0 0 30px rgba(0,150,255,0.8);
+            }
+        }
+
         #popup {
             display: none;
             position: fixed;
             background: rgba(0, 0, 0, 0.85);
             color: white;
-            padding: 20px;
-            border-radius: 15px;
+            padding: 25px;
+            border-radius: 20px;
             z-index: 1000;
-            max-width: 300px;
-            box-shadow: 0 0 20px rgba(0,150,255,0.3);
-            border: 1px solid rgba(0,150,255,0.2);
-            backdrop-filter: blur(5px);
+            max-width: 350px;
+            box-shadow: 0 0 30px rgba(0,150,255,0.3);
+            border: 2px solid rgba(0,150,255,0.3);
+            backdrop-filter: blur(10px);
+            transform: scale(0.9);
+            opacity: 0;
+            transition: all 0.3s ease-out;
         }
+
+        #popup.active {
+            transform: scale(1);
+            opacity: 1;
+        }
+
         #popup h3 {
-            margin: 0 0 10px 0;
+            margin: 0 0 15px 0;
             color: #00aaff;
-            font-size: 18px;
-            border-bottom: 1px solid rgba(0,150,255,0.3);
-            padding-bottom: 8px;
+            font-size: 20px;
+            border-bottom: 2px solid rgba(0,150,255,0.3);
+            padding-bottom: 10px;
+            text-shadow: 0 0 10px rgba(0,150,255,0.5);
+            animation: titlePulse 2s ease-in-out infinite alternate;
         }
+
+        @keyframes titlePulse {
+            from {
+                text-shadow: 0 0 10px rgba(0,150,255,0.5);
+            }
+            to {
+                text-shadow: 0 0 20px rgba(0,150,255,0.8);
+            }
+        }
+
         #popup p {
             margin: 0;
-            line-height: 1.5;
-            font-size: 14px;
+            line-height: 1.6;
+            font-size: 15px;
             color: #e0e0e0;
+            text-shadow: 0 0 5px rgba(255,255,255,0.2);
+            animation: fadeIn 0.5s ease-out;
         }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         .legend {
             position: fixed;
             bottom: 20px;
             left: 20px;
             background: rgba(0, 0, 0, 0.85);
-            padding: 15px;
-            border-radius: 15px;
+            padding: 20px;
+            border-radius: 20px;
             color: white;
             z-index: 100;
-            box-shadow: 0 0 20px rgba(0,150,255,0.3);
-            border: 1px solid rgba(0,150,255,0.2);
-            backdrop-filter: blur(5px);
+            box-shadow: 0 0 30px rgba(0,150,255,0.3);
+            border: 2px solid rgba(0,150,255,0.3);
+            backdrop-filter: blur(10px);
+            transform: translateX(-100%);
+            animation: slideIn 0.5s ease-out forwards;
         }
+
+        @keyframes slideIn {
+            to {
+                transform: translateX(0);
+            }
+        }
+
         .legend div {
-            margin: 8px 0;
+            margin: 10px 0;
             display: flex;
             align-items: center;
+            transition: all 0.3s ease;
         }
+
+        .legend div:hover {
+            transform: translateX(5px);
+            text-shadow: 0 0 10px rgba(255,255,255,0.5);
+        }
+
         .legend span {
             display: inline-block;
-            width: 12px;
-            height: 12px;
-            margin-right: 10px;
+            width: 15px;
+            height: 15px;
+            margin-right: 12px;
             border-radius: 50%;
-            box-shadow: 0 0 5px currentColor;
+            box-shadow: 0 0 10px currentColor;
+            animation: pulse 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes pulse {
+            from {
+                box-shadow: 0 0 5px currentColor;
+            }
+            to {
+                box-shadow: 0 0 15px currentColor;
+            }
+        }
+
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .close-button:hover {
+            background: rgba(255,255,255,0.2);
+            transform: rotate(90deg);
+        }
+
+        #type-badge {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            animation: badgePulse 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes badgePulse {
+            from {
+                transform: scale(1);
+            }
+            to {
+                transform: scale(1.1);
+            }
         }
     </style>
 </head>
 <body>
     <div id="info">Interactive Natural Disasters Globe</div>
     <div id="popup">
+        <div id="type-badge"></div>
+        <button class="close-button">×</button>
         <h3>Title</h3>
         <p>Description</p>
     </div>
@@ -95,53 +213,53 @@
         const disasters = [
             {
                 type: 'Volcano',
-                position: new THREE.Vector3(3, 4, 0).normalize().multiplyScalar(5),
+                coordinates: { lat: 40.7918, lng: 14.4269 }, // Mount Vesuvius, Italy
                 color: 0xff0000,
                 title: 'Mount Vesuvius (Volcanic Zone)',
                 description: 'One of Europe\'s most dangerous volcanoes, located near Naples, Italy. Its most famous eruption in 79 AD buried the cities of Pompeii and Herculaneum.'
             },
             {
                 type: 'Tsunami',
-                position: new THREE.Vector3(-4, 0, 3).normalize().multiplyScalar(5),
+                coordinates: { lat: 3.3167, lng: 95.8833 }, // Off the coast of Sumatra, Indonesia
                 color: 0x00ffff,
                 title: 'Indian Ocean Tsunami Zone',
                 description: 'Site of the devastating 2004 tsunami triggered by a 9.1 magnitude earthquake. Tsunamis are series of ocean waves caused by underwater disturbances.'
             },
             {
                 type: 'Earthquake',
-                position: new THREE.Vector3(0, -4, 3).normalize().multiplyScalar(5),
+                coordinates: { lat: 37.7749, lng: -122.4194 }, // San Francisco, California
                 color: 0xffff00,
                 title: 'San Andreas Fault System',
                 description: 'A major tectonic boundary in California where the Pacific and North American plates meet. The fault spans 750 miles and produces significant earthquakes.'
             },
             {
                 type: 'Hurricane',
-                position: new THREE.Vector3(-3, 2, 4).normalize().multiplyScalar(5),
+                coordinates: { lat: 25.7617, lng: -80.1918 }, // Miami, Florida
                 color: 0x070e66,
                 title: 'Caribbean Hurricane Belt',
                 description: 'A region frequently affected by tropical cyclones during the Atlantic hurricane season (June-November). These powerful storms form over warm ocean waters.'
             },
             {
                 type: 'Tornado',
-                position: new THREE.Vector3(4, -2, 3).normalize().multiplyScalar(5),
+                coordinates: { lat: 35.4676, lng: -97.5164 }, // Oklahoma City, Oklahoma
                 color: 0xff00ff,
                 title: 'Tornado Alley, USA',
                 description: 'A region in the United States with frequent tornado activity, spanning Texas to South Dakota. Peak season is during spring and early summer.'
             },
             {
                 type: 'Wildfire',
-                position: new THREE.Vector3(4, 2, -3).normalize().multiplyScalar(5),
+                coordinates: { lat: -33.8688, lng: 151.2093 }, // Sydney, Australia
                 color: 0xff8c00,
                 title: 'Australian Bushfire Zone',
                 description: 'Region prone to severe bushfires, particularly during the Australian summer. The 2019-2020 season saw some of the most intense fires in recorded history.'
             },
             {
                 type: 'Cyclone',
-                position: new THREE.Vector3(-2, -3, -4).normalize().multiplyScalar(5),
+                coordinates: { lat: 22.3569, lng: 91.7832 }, // Bay of Bengal
                 color: 0x4169e1,
                 title: 'Bay of Bengal Cyclone Region',
                 description: 'One of the world\'s most active cyclone regions. These powerful storms primarily form between April-June and September-November.'
-            },
+            }
         ];
 
         // Scene setup
@@ -150,6 +268,18 @@
         const renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
+
+        // Function to convert latitude and longitude to 3D coordinates
+        function latLngToVector3(lat, lng, radius) {
+            const phi = (90 - lat) * (Math.PI / 180);
+            const theta = (lng + 180) * (Math.PI / 180);
+
+            const x = -(radius * Math.sin(phi) * Math.cos(theta));
+            const z = (radius * Math.sin(phi) * Math.sin(theta));
+            const y = (radius * Math.cos(phi));
+
+            return new THREE.Vector3(x, y, z);
+        }
 
         // texture paths
         const textureLoader = new THREE.TextureLoader();
@@ -200,6 +330,37 @@
         moon.position.set(25, 0, 10);
         scene.add(moon);
 
+        // Create markers
+        const markers = new THREE.Group();
+        disasters.forEach(disaster => {
+            const position = latLngToVector3(
+                disaster.coordinates.lat,
+                disaster.coordinates.lng,
+                5 // Earth radius
+            );
+            
+            const markerGeometry = new THREE.SphereGeometry(0.2, 16, 16);
+            const markerMaterial = new THREE.MeshBasicMaterial({
+                color: disaster.color
+            });
+            const marker = new THREE.Mesh(markerGeometry, markerMaterial);
+            marker.position.copy(position);
+            marker.userData = disaster;
+
+            // Add glow effect
+            const glowGeometry = new THREE.SphereGeometry(0.3, 16, 16);
+            const glowMaterial = new THREE.MeshBasicMaterial({
+                color: disaster.color,
+                transparent: true,
+                opacity: 0.3
+            });
+            const glow = new THREE.Mesh(glowGeometry, glowMaterial);
+            marker.add(glow);
+
+            markers.add(marker);
+        });
+        earth.add(markers);
+
         // Animate Moon orbit and rotation
         let moonAngle = 0;
         function animateMoon() {
@@ -217,31 +378,6 @@
         const directionalLight = new THREE.DirectionalLight(0xffffff, 1.7);
         directionalLight.position.set(10, 10, 10);
         scene.add(directionalLight);
-
-        // Create markers
-        const markers = new THREE.Group();
-        disasters.forEach(disaster => {
-            const markerGeometry = new THREE.SphereGeometry(0.2, 16, 16);
-            const markerMaterial = new THREE.MeshBasicMaterial({
-                color: disaster.color
-            });
-            const marker = new THREE.Mesh(markerGeometry, markerMaterial);
-            marker.position.copy(disaster.position);
-            marker.userData = disaster;
-
-            // Add glow effect
-            const glowGeometry = new THREE.SphereGeometry(0.3, 16, 16);
-            const glowMaterial = new THREE.MeshBasicMaterial({
-                color: disaster.color,
-                transparent: true,
-                opacity: 0.3
-            });
-            const glow = new THREE.Mesh(glowGeometry, glowMaterial);
-            marker.add(glow);
-
-            markers.add(marker);
-        });
-        earth.add(markers);
 
         // Camera position
         camera.position.z = 15;
@@ -269,7 +405,10 @@
                 const marker = intersects[0].object.parent || intersects[0].object;
                 const disaster = marker.userData;
                 const popup = document.getElementById('popup');
+                
+                // Reset popup state
                 popup.style.display = 'block';
+                popup.classList.remove('active');
 
                 const padding = 20;
                 let left = event.clientX + padding;
@@ -285,12 +424,32 @@
 
                 popup.style.left = left + 'px';
                 popup.style.top = top + 'px';
+                
+                // Update content
                 popup.querySelector('h3').textContent = disaster.title;
                 popup.querySelector('p').textContent = disaster.description;
-            } else {
-                document.getElementById('popup').style.display = 'none';
+                
+                // Set type badge color and text
+                const typeBadge = document.getElementById('type-badge');
+                typeBadge.textContent = disaster.type;
+                typeBadge.style.backgroundColor = '#' + disaster.color.toString(16).padStart(6, '0');
+                
+                // Trigger animation
+                requestAnimationFrame(() => {
+                    popup.classList.add('active');
+                });
             }
         }
+
+        // Add close button functionality
+        document.querySelector('.close-button').addEventListener('click', () => {
+            const popup = document.getElementById('popup');
+            popup.classList.remove('active');
+            setTimeout(() => {
+                popup.style.display = 'none';
+            }, 300);
+        });
+
 
         window.addEventListener('click', onClick);
 
@@ -298,7 +457,7 @@
         function animate() {
             requestAnimationFrame(animate);
             earth.rotation.y += 0.002;
-            animateMoon(); // Animate the moon's orbit and rotation
+            animateMoon();
             controls.update();
             renderer.render(scene, camera);
         }
