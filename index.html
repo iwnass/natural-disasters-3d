@@ -4,7 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Earth Natural Disasters</title>
-    <link rel="shortcut icon" href="./disaster.png" type="image/x-icon">
+    <link rel="shortcut icon" href="https://raw.githubusercontent.com/iwnass/natural-disasters-3d/1545be361fa6150df9763f6edc68121c522bd849/disaster.png" type="image/x-icon">
+
+    <script async src="https://cdn.jsdelivr.net/npm/es-module-shims@1.10.0/dist/es-module-shims.min.js"></script>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.172.0/build/three.module.min.js",
+                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.172.0/examples/jsm/"
+            }
+        }
+    </script>
+
     <style>
         body { margin: 0; background-color: #000; font-family: Arial, sans-serif; }
         canvas { display: block; }
@@ -207,7 +219,7 @@
         <div style="text-decoration: underline;"><span style="background: #03b14b;"></span>Made by iwnas</div>
     </div>
     <script type="module">
-        import * as THREE from './node_modules/three/build/three.module.js';
+        import * as THREE from 'three';
         import { OrbitControls } from './node_modules/three/examples/jsm/controls/OrbitControls.js';
 
         const disasters = [
@@ -264,7 +276,7 @@
 
         // Scene setup
         const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
@@ -282,11 +294,18 @@
         }
 
         // texture paths
-        const textureLoader = new THREE.TextureLoader();
-        const earthMap = textureLoader.load('https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_atmos_2048.jpg');
-        const earthSpec = textureLoader.load('https://raw.githubusercontent.com/mrdoob/three.js/blob/dev/examples/textures/planets/earth_specular_2048.jpg');
-        const earthBump = textureLoader.load('https://raw.githubusercontent.com/mrdoob/three.js/blob/dev/examples/textures/planets/earth_normal_2048.jpg');
-        const moonTexture = textureLoader.load('https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/moon_1024.jpg');
+        const textureLoader = new THREE.TextureLoader()
+        .setPath('https://raw.githubusercontent.com/GitHubDragonFly/three.js/dev/examples/textures/planets/');
+        const earthMap = textureLoader.load('earth_atmos_4096.jpg');
+        earthMap.colorSpace = THREE.SRGBColorSpace;
+        const earthSpec = textureLoader.load('earth_specular_2048.jpg');
+        earthSpec.colorSpace = THREE.NoColorSpace;
+        const earthNormal = textureLoader.load('earth_normal_2048.jpg');
+        earthNormal.colorSpace = THREE.NoColorSpace;
+        const earthBump = textureLoader.load('earth_bump_roughness_clouds_4096.jpg');
+        earthBump.colorSpace = THREE.SRGBColorSpace;
+        const moonTexture = textureLoader.load('moon_1024.jpg');
+        moonTexture.colorSpace = THREE.SRGBColorSpace;
 
         // Add stars
         const starGeometry = new THREE.BufferGeometry();
@@ -311,10 +330,11 @@
         const earthGeometry = new THREE.SphereGeometry(5, 64, 64);
         const earthMaterial = new THREE.MeshPhongMaterial({
             map: earthMap,
+            normalMap: earthNormal,
             bumpMap: earthBump,
-            bumpScale: 0.05,
+            bumpScale: 0.075,
             specularMap: earthSpec,
-            specular: new THREE.Color('grey'),
+            specular: new THREE.Color('gainsboro'),
             shininess: 5
         });
         const earth = new THREE.Mesh(earthGeometry, earthMaterial);
@@ -324,7 +344,10 @@
         const moonGeometry = new THREE.SphereGeometry(1.5, 32, 32);
         const moonMaterial = new THREE.MeshPhongMaterial({
             map: moonTexture,
-            bumpScale: 0.02,
+            bumpMap: moonTexture,
+            bumpScale: 0.1,
+            specular: new THREE.Color('grey'),
+            shininess: 3
         });
         const moon = new THREE.Mesh(moonGeometry, moonMaterial);
         moon.position.set(25, 0, 10);
@@ -364,18 +387,18 @@
         // Animate Moon orbit and rotation
         let moonAngle = 0;
         function animateMoon() {
-            moonAngle += 0.002;
+            moonAngle += 0.001;
             const radius = 8;
             moon.position.x = Math.cos(moonAngle) * radius;
             moon.position.z = Math.sin(moonAngle) * radius;
-            moon.rotation.y += 0.01; // Make the moon rotate on its axis
+            moon.rotation.y += 0.002; // Make the moon rotate on its axis
         }
 
         // Lighting
         const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
         scene.add(ambientLight);
 
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 1.7);
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 2.0);
         directionalLight.position.set(10, 10, 10);
         scene.add(directionalLight);
 
@@ -456,7 +479,7 @@
         // Animation loop
         function animate() {
             requestAnimationFrame(animate);
-            earth.rotation.y += 0.002;
+            earth.rotation.y += 0.0002;
             animateMoon();
             controls.update();
             renderer.render(scene, camera);
@@ -466,9 +489,9 @@
 
         // Resize handler
         window.addEventListener('resize', () => {
+            renderer.setSize(window.innerWidth, window.innerHeight);
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
         });
     </script>
 </body>
