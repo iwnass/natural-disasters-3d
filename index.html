@@ -4,15 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Earth Natural Disasters</title>
-    <link rel="shortcut icon" href="https://raw.githubusercontent.com/iwnass/natural-disasters-3d/1545be361fa6150df9763f6edc68121c522bd849/disaster.png" type="image/x-icon">
 
-    <script async src="https://cdn.jsdelivr.net/npm/es-module-shims@1.10.0/dist/es-module-shims.min.js"></script>
+    <script async src="https://cdnjs.cloudflare.com/ajax/libs/es-module-shims/1.6.3/es-module-shims.js"></script>
 
     <script type="importmap">
         {
             "imports": {
-                "three": "https://cdn.jsdelivr.net/npm/three@0.172.0/build/three.module.min.js",
-                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.172.0/examples/jsm/"
+                "three": "https://unpkg.com/three@0.156.1/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.156.1/examples/jsm/"
             }
         }
     </script>
@@ -216,58 +215,58 @@
         <div><span style="background: #ff00ff;"></span>Tornado</div>
         <div><span style="background: #ff8c00;"></span>Wildfire</div>
         <div><span style="background: #4169e1;"></span>Cyclone</div>
-        <div style="text-decoration: underline;"><span style="background: #03b14b;"></span>Made by iwnas</div>
     </div>
+
     <script type="module">
         import * as THREE from 'three';
-        import { OrbitControls } from './node_modules/three/examples/jsm/controls/OrbitControls.js';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
         const disasters = [
             {
                 type: 'Volcano',
-                coordinates: { lat: 40.7918, lng: 14.4269 }, // Mount Vesuvius, Italy
+                coordinates: { lat: 40.7918, lng: 14.4269 },
                 color: 0xff0000,
                 title: 'Mount Vesuvius (Volcanic Zone)',
                 description: 'One of Europe\'s most dangerous volcanoes, located near Naples, Italy. Its most famous eruption in 79 AD buried the cities of Pompeii and Herculaneum.'
             },
             {
                 type: 'Tsunami',
-                coordinates: { lat: 3.3167, lng: 95.8833 }, // Off the coast of Sumatra, Indonesia
+                coordinates: { lat: 3.3167, lng: 95.8833 },
                 color: 0x00ffff,
                 title: 'Indian Ocean Tsunami Zone',
                 description: 'Site of the devastating 2004 tsunami triggered by a 9.1 magnitude earthquake. Tsunamis are series of ocean waves caused by underwater disturbances.'
             },
             {
                 type: 'Earthquake',
-                coordinates: { lat: 37.7749, lng: -122.4194 }, // San Francisco, California
+                coordinates: { lat: 37.7749, lng: -122.4194 },
                 color: 0xffff00,
                 title: 'San Andreas Fault System',
                 description: 'A major tectonic boundary in California where the Pacific and North American plates meet. The fault spans 750 miles and produces significant earthquakes.'
             },
             {
                 type: 'Hurricane',
-                coordinates: { lat: 25.7617, lng: -80.1918 }, // Miami, Florida
+                coordinates: { lat: 25.7617, lng: -80.1918 },
                 color: 0x070e66,
                 title: 'Caribbean Hurricane Belt',
                 description: 'A region frequently affected by tropical cyclones during the Atlantic hurricane season (June-November). These powerful storms form over warm ocean waters.'
             },
             {
                 type: 'Tornado',
-                coordinates: { lat: 35.4676, lng: -97.5164 }, // Oklahoma City, Oklahoma
+                coordinates: { lat: 35.4676, lng: -97.5164 },
                 color: 0xff00ff,
                 title: 'Tornado Alley, USA',
                 description: 'A region in the United States with frequent tornado activity, spanning Texas to South Dakota. Peak season is during spring and early summer.'
             },
             {
                 type: 'Wildfire',
-                coordinates: { lat: -33.8688, lng: 151.2093 }, // Sydney, Australia
+                coordinates: { lat: -33.8688, lng: 151.2093 },
                 color: 0xff8c00,
                 title: 'Australian Bushfire Zone',
                 description: 'Region prone to severe bushfires, particularly during the Australian summer. The 2019-2020 season saw some of the most intense fires in recorded history.'
             },
             {
                 type: 'Cyclone',
-                coordinates: { lat: 22.3569, lng: 91.7832 }, // Bay of Bengal
+                coordinates: { lat: 22.3569, lng: 91.7832 },
                 color: 0x4169e1,
                 title: 'Bay of Bengal Cyclone Region',
                 description: 'One of the world\'s most active cyclone regions. These powerful storms primarily form between April-June and September-November.'
@@ -293,20 +292,6 @@
             return new THREE.Vector3(x, y, z);
         }
 
-        // texture paths
-        const textureLoader = new THREE.TextureLoader()
-        .setPath('https://raw.githubusercontent.com/GitHubDragonFly/three.js/dev/examples/textures/planets/');
-        const earthMap = textureLoader.load('earth_atmos_4096.jpg');
-        earthMap.colorSpace = THREE.SRGBColorSpace;
-        const earthSpec = textureLoader.load('earth_specular_2048.jpg');
-        earthSpec.colorSpace = THREE.NoColorSpace;
-        const earthNormal = textureLoader.load('earth_normal_2048.jpg');
-        earthNormal.colorSpace = THREE.NoColorSpace;
-        const earthBump = textureLoader.load('earth_bump_roughness_clouds_4096.jpg');
-        earthBump.colorSpace = THREE.SRGBColorSpace;
-        const moonTexture = textureLoader.load('moon_1024.jpg');
-        moonTexture.colorSpace = THREE.SRGBColorSpace;
-
         // Add stars
         const starGeometry = new THREE.BufferGeometry();
         const starMaterial = new THREE.PointsMaterial({
@@ -326,14 +311,27 @@
         const stars = new THREE.Points(starGeometry, starMaterial);
         scene.add(stars);
 
+        // texture loader
+        const textureLoader = new THREE.TextureLoader();
+        textureLoader.setPath('https://raw.githubusercontent.com/GitHubDragonFly/three.js/dev/examples/textures/planets/');
+        
+        // Earth textures
+        const earthMap = textureLoader.load('earth_atmos_4096.jpg');
+        const earthNormal = textureLoader.load('earth_normal_2048.jpg');
+        const earthSpec = textureLoader.load('earth_specular_2048.jpg');
+        const earthBump = textureLoader.load('earth_bump_roughness_clouds_4096.jpg');
+        
+        // Moon texture
+        const moonTexture = textureLoader.load('moon_1024.jpg');
+
         // Earth setup
         const earthGeometry = new THREE.SphereGeometry(5, 64, 64);
         const earthMaterial = new THREE.MeshPhongMaterial({
             map: earthMap,
             normalMap: earthNormal,
+            specularMap: earthSpec,
             bumpMap: earthBump,
             bumpScale: 0.075,
-            specularMap: earthSpec,
             specular: new THREE.Color('gainsboro'),
             shininess: 5
         });
@@ -359,7 +357,7 @@
             const position = latLngToVector3(
                 disaster.coordinates.lat,
                 disaster.coordinates.lng,
-                5 // Earth radius
+                5
             );
             
             const markerGeometry = new THREE.SphereGeometry(0.2, 16, 16);
@@ -370,7 +368,6 @@
             marker.position.copy(position);
             marker.userData = disaster;
 
-            // Add glow effect
             const glowGeometry = new THREE.SphereGeometry(0.3, 16, 16);
             const glowMaterial = new THREE.MeshBasicMaterial({
                 color: disaster.color,
@@ -384,8 +381,8 @@
         });
         earth.add(markers);
 
-        // Animate Moon orbit and rotation
-        let moonAngle = 0;
+         // Animate Moon orbit and rotation
+         let moonAngle = 0;
         function animateMoon() {
             moonAngle += 0.001;
             const radius = 8;
